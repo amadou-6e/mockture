@@ -122,12 +122,13 @@ class Mockture:
             if not isinstance(headers, dict):
                 headers = {}
 
-            self._contract.validate_config_interaction(
-                method=method,
-                path=path,
-                status_code=status,
-                response_body=body,
-            )
+            if self._strict:
+                self._contract.validate_config_interaction(
+                    method=method,
+                    path=path,
+                    status_code=status,
+                    response_body=body,
+                )
 
             interaction = _Interaction(
                 template_name=template_name,

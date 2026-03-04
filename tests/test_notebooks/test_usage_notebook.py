@@ -7,7 +7,7 @@ from nbclient import NotebookClient
 def test_usage_notebook_runs_end_to_end() -> None:
     repo_root = Path(__file__).resolve().parents[2]
     usage_dir = Path(repo_root, "usage")
-    notebook_path = Path(usage_dir, "mockture_usage.ipynb")
+    notebook_path = Path(usage_dir, "mockture_server_usage.ipynb")
 
     notebook = nbformat.read(str(notebook_path), as_version=4)
 
