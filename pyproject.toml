@@ -6,10 +6,22 @@ build-backend = "setuptools.build_meta"
 name = "mockture"
 version = "0.1.0"
 description = "Contract-aware in-process HTTP mocking for pytest"
-readme = "MVP_SPEC.md"
+readme = "README.md"
 requires-python = ">=3.11"
 authors = [
   { name = "Mockture Contributors" }
+]
+license = { file = "LICENSE" }
+keywords = ["pytest", "mocking", "openapi", "testing", "http"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Framework :: Pytest",
+  "Topic :: Software Development :: Testing",
 ]
 dependencies = [
   "PyYAML>=6.0",
@@ -34,8 +46,14 @@ usage = [
   "ipython>=8.0.0",
 ]
 
-[tool.setuptools]
-packages = ["mockture"]
+[project.urls]
+Homepage = "https://github.com/amadou-6e/mockture"
+Repository = "https://github.com/amadou-6e/mockture"
+Issues = "https://github.com/amadou-6e/mockture/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["mockture*"]
 
 [project.scripts]
 mockture = "mockture.cli:main"
