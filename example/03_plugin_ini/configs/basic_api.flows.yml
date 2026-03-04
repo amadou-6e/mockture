@@ -1,0 +1,23 @@
+flows:
+  # Sequence: create an order, then fetch it back.
+  create_and_fetch:
+    - template: create_order_success
+      args:
+        order_id: ord-flow-001
+        status: queued
+    - template: get_order
+      args:
+        order_id: ord-flow-001
+        status: queued
+
+  # Single template shorthand — string value instead of list.
+  conflict_only: create_order_conflict
+
+  # Scenario dict — same format as inline respond(dict).
+  # Registers both templates in one call.
+  mixed_scenario:
+    create_order_success:
+      order_id: ord-scenario-001
+      status: created
+    create_order_conflict:
+      message: Duplicate order detected

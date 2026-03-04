@@ -1,0 +1,20 @@
+# Hand-authored templates — safe to edit; NOT overwritten by mockture generate.
+# Use this file for templates that cannot be expressed as x-mockture annotations:
+#   - body directives ($generate, $thread)
+#   - complex default logic
+#   - intentional contract violations
+
+templates:
+  # A template that intentionally violates the response schema.
+  # Useful for testing how your client handles malformed responses.
+  # Must live here (not in .auto.yml) so regeneration does not erase it.
+  invalid_success_shape:
+    args:
+      status_code: 201
+    interaction:
+      method: POST
+      path: /orders
+      response:
+        status: "{status_code}"
+        body:
+          bad_field: should_fail

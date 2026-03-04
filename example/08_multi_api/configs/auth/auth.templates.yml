@@ -1,0 +1,40 @@
+templates:
+  login_success:
+    args:
+      status_code: 200
+      access_token: tok-default
+      token_type: bearer
+    interaction:
+      method: POST
+      path: /auth/token
+      response:
+        status: "{status_code}"
+        body:
+          access_token: "{access_token}"
+          token_type: "{token_type}"
+
+  login_unauthorized:
+    args:
+      status_code: 401
+      message: Invalid credentials
+    interaction:
+      method: POST
+      path: /auth/token
+      response:
+        status: "{status_code}"
+        body:
+          message: "{message}"
+
+  get_me:
+    args:
+      status_code: 200
+      user_id: usr-default
+      username: alice
+    interaction:
+      method: GET
+      path: /auth/me
+      response:
+        status: "{status_code}"
+        body:
+          user_id: "{user_id}"
+          username: "{username}"

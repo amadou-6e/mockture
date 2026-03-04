@@ -1,0 +1,12 @@
+# A scenario YAML file — passed to mockture.respond() as a file path.
+# Keys are template names; values are args (or a list of args for multiple invocations).
+
+create_order_success:
+  order_id: ord-reorder-001
+  status: created
+
+get_order:
+  - order_id: ord-reorder-001
+    status: created
+  - order_id: ord-reorder-001
+    status: processing

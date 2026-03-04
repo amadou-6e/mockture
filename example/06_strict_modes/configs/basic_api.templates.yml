@@ -1,0 +1,40 @@
+templates:
+  create_order_success:
+    args:
+      status_code: 201
+      order_id: ord-default
+      status: created
+    interaction:
+      method: POST
+      path: /orders
+      response:
+        status: "{status_code}"
+        body:
+          order_id: "{order_id}"
+          status: "{status}"
+
+  create_order_conflict:
+    args:
+      status_code: 409
+      message: Item is unavailable
+    interaction:
+      method: POST
+      path: /orders
+      response:
+        status: "{status_code}"
+        body:
+          message: "{message}"
+
+  # This template intentionally violates the contract schema.
+  # It returns a body that does not match OrderResponse.
+  # Used in 06_strict_modes to demonstrate config-time detection.
+  invalid_success_shape:
+    args:
+      status_code: 201
+    interaction:
+      method: POST
+      path: /orders
+      response:
+        status: "{status_code}"
+        body:
+          bad_field: should_fail

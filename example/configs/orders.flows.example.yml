@@ -1,0 +1,52 @@
+# Example schema proposal for call-history-driven interaction sequencing.
+# This format uses step-local `when.previous_call` guards instead of transitions.
+# Documentation/example only (not engine-supported).
+
+flow:
+  name: order_previous_call_flow
+  steps:
+    - on_call:
+        method: POST
+        path: /orders
+      template: create_order_success
+      args:
+        order_id: ord-flow-001
+        status: queued
+
+    - when:
+        previous_call:
+          method: POST
+          path: /orders
+          offset: 1
+      on_call:
+        method: GET
+        path: /orders/ord-flow-001
+      template: create_order_success
+      args:
+        order_id: ord-flow-001
+        status: processing
+
+    - when:
+        previous_call:
+          method: GET
+          path: /orders/ord-flow-001
+          offset: 1
+      on_call:
+        method: GET
+        path: /orders/ord-flow-001
+      template: create_order_success
+      args:
+        order_id: ord-flow-001
+        status: completed
+
+    - when:
+        previous_call:
+          method: DELETE
+          path: /orders/ord-flow-001
+          offset: 1
+      on_call:
+        method: GET
+        path: /orders/ord-flow-001
+      template: create_order_conflict
+      args:
+        message: order cancelled

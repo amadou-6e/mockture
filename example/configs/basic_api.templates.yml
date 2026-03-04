@@ -1,0 +1,37 @@
+templates:
+  create_order_success:
+    args:
+      status_code: 201
+      order_id: ord-example-001
+      status: created
+    interaction:
+      method: POST
+      path: /orders
+      response:
+        status: "{status_code}"
+        body:
+          order_id: "{order_id}"
+          status: "{status}"
+
+  create_order_conflict:
+    args:
+      status_code: 409
+      message: Item is unavailable
+    interaction:
+      method: POST
+      path: /orders
+      response:
+        status: "{status_code}"
+        body:
+          message: "{message}"
+
+  invalid_success_shape:
+    args:
+      status_code: 201
+    interaction:
+      method: POST
+      path: /orders
+      response:
+        status: "{status_code}"
+        body:
+          bad_field: should_fail
