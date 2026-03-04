@@ -2,8 +2,6 @@ from pathlib import Path
 
 import pytest
 
-pytest_plugins = ["mockture.pytest_plugin"]
-
 
 @pytest.fixture
 def fixtures_dir() -> Path:
