@@ -1,0 +1,9 @@
+flows:
+  order_previous_call_flow:
+    sequence:
+      - create_order_success
+      - create_order_conflict
+
+  create_then_bad:
+    - create_order_success
+    - invalid_success_shape

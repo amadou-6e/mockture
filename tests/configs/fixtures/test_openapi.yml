@@ -1,0 +1,91 @@
+openapi: 3.0.3
+info:
+  title: Mockture Test Contract
+  version: 1.0.0
+paths:
+  /orders:
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrderRequest'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /incidents/{incident_id}/threads:
+    get:
+      responses:
+        '200':
+          description: Thread index
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        rel:
+                          type: string
+                        href:
+                          type: string
+                      required: [rel, href]
+                required: [items]
+  /incidents/{incident_id}/threads/{thread_id}:
+    get:
+      responses:
+        '200':
+          description: Thread details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  text:
+                    type: string
+                  entryType:
+                    type: object
+                required: [id, text, entryType]
+components:
+  schemas:
+    CreateOrderRequest:
+      type: object
+      properties:
+        item_id:
+          type: string
+          minLength: 1
+        quantity:
+          type: integer
+          minimum: 1
+          maximum: 100
+      required: [item_id, quantity]
+    OrderResponse:
+      type: object
+      properties:
+        order_id:
+          type: string
+        status:
+          type: string
+      required: [order_id, status]
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+      required: [message]

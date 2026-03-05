@@ -1,0 +1,6 @@
+create_order_success:
+  order_id: ord-s1
+  order_status: queued
+
+create_order_conflict:
+  message: cannot create

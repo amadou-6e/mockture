@@ -1,0 +1,106 @@
+templates:
+  create_order_success:
+    args:
+      status_code: 201
+      order_id: ord-default
+      order_status: created
+    interaction:
+      method: POST
+      path: /orders
+      response:
+        status: "{status_code}"
+        body:
+          order_id: "{order_id}"
+          status: "{order_status}"
+
+  create_order_bad_response:
+    args:
+      status_code: 201
+    interaction:
+      method: POST
+      path: /orders
+      response:
+        status: "{status_code}"
+        body:
+          wrong_field: nope
+
+  create_order_conflict:
+    args:
+      status_code: 409
+      message: conflict
+    interaction:
+      method: POST
+      path: /orders
+      response:
+        status: "{status_code}"
+        body:
+          message: "{message}"
+
+  wrong_path:
+    args:
+      status_code: 201
+    interaction:
+      method: POST
+      path: /missing
+      response:
+        status: "{status_code}"
+        body:
+          order_id: ord-1
+          status: created
+
+  wrong_method:
+    args:
+      status_code: 201
+    interaction:
+      method: GET
+      path: /orders
+      response:
+        status: "{status_code}"
+        body:
+          order_id: ord-1
+          status: created
+
+  wrong_status:
+    args:
+      status_code: 202
+    interaction:
+      method: POST
+      path: /orders
+      response:
+        status: "{status_code}"
+        body:
+          order_id: ord-1
+          status: created
+
+  patch_incident:
+    args:
+      incident_id:
+      status_code: 200
+    interaction:
+      method: GET
+      path: /incidents/{incident_id}/threads
+      response:
+        status: "{status_code}"
+        body:
+          items:
+            $generate: thread_links
+
+  get_thread:
+    args:
+      incident_id:
+      thread_id: 1
+      text: default text
+      entry_type: customer
+      channel: EMAIL
+    interaction:
+      method: GET
+      path: /incidents/{incident_id}/threads/{thread_id}
+      response:
+        status: 200
+        body:
+          $thread:
+            id: "{thread_id}"
+            text: "{text}"
+            entry_type: "{entry_type}"
+            channel: "{channel}"
+            incident_id: "{incident_id}"

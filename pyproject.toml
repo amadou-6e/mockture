@@ -1,0 +1,72 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mockture"
+version = "0.1.0"
+description = "Contract-aware in-process HTTP mocking for pytest"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+  { name = "Mockture Contributors" }
+]
+license = { file = "LICENSE" }
+keywords = ["pytest", "mocking", "openapi", "testing", "http"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Framework :: Pytest",
+  "Topic :: Software Development :: Testing",
+]
+dependencies = [
+  "PyYAML>=6.0",
+  "jsonschema>=4.23.0",
+  "pytest>=8.0.0",
+  "pytest-httpserver>=1.1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0.0",
+  "pytest-asyncio>=0.23.0",
+  "ruff>=0.6.0",
+  "nbclient>=0.10.0",
+  "nbformat>=5.10.0",
+  "ipykernel>=6.0.0",
+]
+usage = [
+  "fastapi>=0.115.0",
+  "uvicorn>=0.30.0",
+  "httpx>=0.27.0",
+  "ipython>=8.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/amadou-6e/mockture"
+Repository = "https://github.com/amadou-6e/mockture"
+Issues = "https://github.com/amadou-6e/mockture/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["mockture*"]
+
+[project.scripts]
+mockture = "mockture.cli:main"
+
+[project.entry-points.pytest11]
+mockture = "mockture.pytest_plugin"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+mockture_contract = "tests/configs/fixtures/test_openapi.yml"
+mockture_templates = "tests/configs/fixtures/test_orders.templates.yml"
+mockture_flows = "tests/configs/fixtures/test_named.flows.yml"
+markers = [
+  "mockture([flow_name|sequence|scenario], contract=None, templates=None, scenario=None, sequence=None, flow=None, flows_path=None, scope='function', strict=True, host='127.0.0.1', port=0, auto_start=True): configure and start Mockture for the test."
+]

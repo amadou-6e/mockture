@@ -1,0 +1,96 @@
+openapi: 3.0.3
+info:
+  title: Mockture Example Order API
+  version: 1.0.0
+paths:
+  /orders:
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrderRequest'
+      responses:
+        '201':
+          description: Order created
+          x-mockture-template: create_order_success
+          x-mockture-defaults:
+            order_id: ord-default
+            status: created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
+        '409':
+          description: Conflict
+          x-mockture-template: create_order_conflict
+          x-mockture-defaults:
+            message: Item is unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /orders/{order_id}:
+    get:
+      parameters:
+        - name: order_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Order found
+          x-mockture-template: get_order
+          x-mockture-required:
+            - order_id      # caller must supply; schema has no example
+          x-mockture-defaults:
+            status: created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
+        '404':
+          description: Not found
+          x-mockture-template: get_order_not_found
+          x-mockture-required:
+            - order_id
+          x-mockture-defaults:
+            message: Order not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    CreateOrderRequest:
+      type: object
+      properties:
+        item_id:
+          type: string
+          minLength: 1
+        quantity:
+          type: integer
+          minimum: 1
+          maximum: 100
+      required:
+        - item_id
+        - quantity
+    OrderResponse:
+      type: object
+      properties:
+        order_id:
+          type: string
+        status:
+          type: string
+      required:
+        - order_id
+        - status
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+        - message
