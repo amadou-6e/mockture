@@ -6,6 +6,10 @@ from pydantic import BaseModel
 from pydantic import Field
 
 
+class ErrorResponse(BaseModel):
+    detail: str
+
+
 class CreateOrderRequest(BaseModel):
     item_id: str = Field(min_length=1)
     quantity: int = Field(ge=1, le=100)
@@ -24,7 +28,7 @@ def health() -> dict[str, str]:
     return {"status": "ok"}
 
 
-@app.post("/orders", response_model=OrderResponse, status_code=201)
+@app.post("/orders", response_model=OrderResponse, status_code=201, responses={409: {"model": ErrorResponse}})
 def create_order(payload: CreateOrderRequest) -> OrderResponse:
     if payload.item_id == "FAIL":
         raise HTTPException(status_code=409, detail="Item is unavailable")

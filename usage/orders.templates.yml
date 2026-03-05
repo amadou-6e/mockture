@@ -23,7 +23,7 @@ templates:
       response:
         status: "{status_code}"
         body:
-          message: "{message}"
+          detail: "{message}"
 
   invalid_response_shape:
     args:
