@@ -1,7 +1,7 @@
-"""08_multi_api — Orders API tests.
+"""08_multi_api â€” Orders API tests.
 
 mockture.ini in this directory points at configs/orders/.
-Markers use no api= — the ini provides contract and templates directly.
+Markers use no api= â€” the ini provides contract and templates directly.
 """
 
 import httpx
@@ -10,6 +10,7 @@ import pytest
 
 @pytest.mark.mockture
 def test_create_order(mockture) -> None:
+    """Test create order."""
     mockture.respond("create_order_success", order_id="ord-multi-1")
 
     r = httpx.post(
@@ -25,6 +26,7 @@ def test_create_order(mockture) -> None:
 
 @pytest.mark.mockture
 def test_create_order_conflict(mockture) -> None:
+    """Test create order conflict."""
     mockture.respond("create_order_conflict")
 
     r = httpx.post(
@@ -38,6 +40,7 @@ def test_create_order_conflict(mockture) -> None:
 
 @pytest.mark.mockture
 def test_fetch_order(mockture) -> None:
+    """Test fetch order."""
     mockture.respond("get_order", order_id="ord-multi-2", status="processing")
 
     r = httpx.get(mockture.url_for("/orders/ord-multi-2"), timeout=5.0)

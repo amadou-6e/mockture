@@ -1,6 +1,6 @@
-"""01_basic — Raw Mockture object, no pytest plugin.
+"""01_basic â€” Raw Mockture object, no pytest plugin.
 
-Shows the full lifecycle: construct → respond → start → assert → stop.
+Shows the full lifecycle: construct â†’ respond â†’ start â†’ assert â†’ stop.
 No fixtures, no ini files. Good starting point for understanding
 what the plugin automates.
 """
@@ -29,6 +29,7 @@ def _mock(**kwargs) -> Mockture:
 # ---------------------------------------------------------------------------
 
 def test_create_order_returns_201() -> None:
+    """Test create order returns 201."""
     mock = _mock(strict=True)
     mock.respond("create_order_success", order_id="ord-123", status="queued")
     mock.start()
@@ -49,6 +50,7 @@ def test_create_order_returns_201() -> None:
 
 
 def test_fetch_order_returns_200() -> None:
+    """Test fetch order returns 200."""
     mock = _mock(strict=True)
     mock.respond("get_order", order_id="ord-456", status="processing")
     mock.start()
@@ -65,6 +67,7 @@ def test_fetch_order_returns_200() -> None:
 
 
 def test_conflict_returns_409() -> None:
+    """Test conflict returns 409."""
     mock = _mock(strict=True)
     mock.respond("create_order_conflict", message="Duplicate item")
     mock.start()
@@ -86,6 +89,7 @@ def test_conflict_returns_409() -> None:
 # ---------------------------------------------------------------------------
 
 def test_respond_chaining_registers_multiple_interactions() -> None:
+    """Test respond chaining registers multiple interactions."""
     mock = _mock(strict=True)
     (
         mock
@@ -109,6 +113,7 @@ def test_respond_chaining_registers_multiple_interactions() -> None:
 # ---------------------------------------------------------------------------
 
 def test_respond_before_start_queues_interaction() -> None:
+    """Test respond before start queues interaction."""
     mock = _mock(strict=True)
     mock.respond("create_order_success", order_id="ord-prequeue")
     # Interaction is registered before the server is running.
@@ -131,6 +136,7 @@ def test_respond_before_start_queues_interaction() -> None:
 # ---------------------------------------------------------------------------
 
 def test_invalid_template_raises_at_respond_time() -> None:
+    """Test invalid template raises at respond time."""
     mock = _mock(strict=True)
     with pytest.raises(ContractConfigError):
         mock.respond("invalid_success_shape")
@@ -141,6 +147,7 @@ def test_invalid_template_raises_at_respond_time() -> None:
 # ---------------------------------------------------------------------------
 
 def test_calls_for_returns_recorded_requests() -> None:
+    """Test calls for returns recorded requests."""
     mock = _mock(strict=False)
     mock.respond("create_order_success")
     mock.start()

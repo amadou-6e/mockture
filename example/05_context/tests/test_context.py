@@ -1,4 +1,4 @@
-"""05_context — for_context() scoped context manager.
+"""05_context â€” for_context() scoped context manager.
 
 When multiple respond() calls in a test share the same arg values
 (e.g., the same order_id), for_context() avoids repeating them on
@@ -102,7 +102,7 @@ def test_multiple_contexts_independent() -> None:
 
 
 def test_context_without_context_manager() -> None:
-    """for_context() can also be used without 'with' — ctx.respond() works the same."""
+    """for_context() can also be used without 'with' â€” ctx.respond() works the same."""
     mock = _mock(strict=False)
 
     ctx = mock.for_context(order_id="ord-noctx")

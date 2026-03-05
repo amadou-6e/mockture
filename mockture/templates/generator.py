@@ -15,7 +15,13 @@ from mockture.errors import ContractConfigError
 
 
 class TemplateGenerator:
-    """Generate Mockture templates from OpenAPI contracts."""
+    """Generate Mockture templates from OpenAPI contracts.
+
+    Parameters
+    ----------
+    contract_path : str
+        Path to the OpenAPI contract file used for template inference.
+    """
 
     def __init__(self, contract_path: str) -> None:
         self._contract_path = Path(contract_path)
@@ -23,12 +29,45 @@ class TemplateGenerator:
         self._templates: dict[str, dict[str, Any]] = {}
 
     def path(self, path_value: str) -> "PathBuilder":
+        """Start building templates for a specific API path.
+
+        Parameters
+        ----------
+        path_value : str
+            OpenAPI path key, for example ``/orders``.
+
+        Returns
+        -------
+        PathBuilder
+            Builder scoped to the provided path.
+        """
         return PathBuilder(generator=self, path_value=path_value)
 
     def all(self) -> "GlobalAllBuilder":
+        """Start generation across all paths and methods in the contract.
+
+        Returns
+        -------
+        GlobalAllBuilder
+            Builder that materializes templates for all declared responses.
+        """
         return GlobalAllBuilder(generator=self)
 
     def save(self, output_path: str, verbose: bool = False) -> "TemplateGenerator":
+        """Persist generated templates to disk.
+
+        Parameters
+        ----------
+        output_path : str
+            Target file path for generated templates YAML.
+        verbose : bool, default=False
+            Whether to print generated template names.
+
+        Returns
+        -------
+        TemplateGenerator
+            The same instance for fluent chaining.
+        """
         target = Path(output_path)
         payload = {"templates": self._templates}
         target.write_text(yaml.safe_dump(payload, sort_keys=False), encoding="utf-8")
@@ -38,6 +77,13 @@ class TemplateGenerator:
         return self
 
     def templates(self) -> dict[str, dict[str, Any]]:
+        """Return a copy of generated templates.
+
+        Returns
+        -------
+        dict[str, dict[str, Any]]
+            Deep-copied template registry keyed by template name.
+        """
         return deepcopy(self._templates)
 
     def _register_template(self, name: str, template: dict[str, Any]) -> None:
@@ -226,6 +272,18 @@ class PathBuilder:
         self._path_value = path_value
 
     def method(self, method_value: str) -> "MethodBuilder":
+        """Select an HTTP method for this path.
+
+        Parameters
+        ----------
+        method_value : str
+            HTTP method name.
+
+        Returns
+        -------
+        MethodBuilder
+            Method-scoped builder.
+        """
         return MethodBuilder(
             generator=self._generator,
             path_value=self._path_value,
@@ -243,11 +301,36 @@ class MethodBuilder:
         self._params: dict[str, Any] = {}
 
     def params(self, **kwargs: Any) -> "MethodBuilder":
+        """Set default args applied to generated templates.
+
+        Parameters
+        ----------
+        **kwargs : Any
+            Default argument values merged into template args.
+
+        Returns
+        -------
+        MethodBuilder
+            The same builder for chaining.
+        """
         self._params.update(kwargs)
         return self
 
     def response(self, template_name: str, status_code: int) -> "SingleTemplateBuilder":
-        """Build an inferred template for the given status code."""
+        """Build an inferred template for one response code.
+
+        Parameters
+        ----------
+        template_name : str
+            Name to assign to the generated template.
+        status_code : int
+            Declared response status code to infer from.
+
+        Returns
+        -------
+        SingleTemplateBuilder
+            Builder containing a single template entry.
+        """
         template = self._generator._build_inferred_template(
             template_name=template_name,
             path_value=self._path_value,
@@ -263,6 +346,22 @@ class MethodBuilder:
         status_code: int,
         body: dict[str, Any],
     ) -> "SingleTemplateBuilder":
+        """Build a custom-body template for one response code.
+
+        Parameters
+        ----------
+        template_name : str
+            Name to assign to the generated template.
+        status_code : int
+            Response status code to configure.
+        body : dict[str, Any]
+            Explicit response body payload.
+
+        Returns
+        -------
+        SingleTemplateBuilder
+            Builder containing a single template entry.
+        """
         template = self._generator._build_custom_template(
             path_value=self._path_value,
             method=self._method_value,
@@ -273,6 +372,13 @@ class MethodBuilder:
         return SingleTemplateBuilder(self._generator, template_name, template)
 
     def all(self) -> "MultiTemplateBuilder":
+        """Build templates for all declared response codes on this operation.
+
+        Returns
+        -------
+        MultiTemplateBuilder
+            Builder containing multiple generated templates.
+        """
         template_entries: list[tuple[str, dict[str, Any]]] = []
         for code in self._generator._response_codes(path_value=self._path_value, method=self._method_value):
             category = "success" if code < 400 else "failure"
@@ -314,6 +420,7 @@ class SingleTemplateBuilder:
         self._template = template
 
     def to_template(self) -> TemplateGenerator:
+        """Register the generated template and return the generator."""
         self._generator._register_template(self._template_name, self._template)
         return self._generator
 
@@ -330,6 +437,7 @@ class MultiTemplateBuilder:
         self._templates = templates
 
     def to_templates(self) -> TemplateGenerator:
+        """Register all generated templates and return the generator."""
         for name, template in self._templates:
             self._generator._register_template(name, template)
         return self._generator
@@ -342,6 +450,7 @@ class GlobalAllBuilder:
         self._generator = generator
 
     def to_templates(self) -> TemplateGenerator:
+        """Generate and register templates for all operations in the contract."""
         paths = self._generator._spec.get("paths", {})
         for path_value, path_item in paths.items():
             if not isinstance(path_item, dict):

@@ -17,7 +17,13 @@ from mockture.errors import ContractRuntimeError
 
 
 class OpenAPIContractValidator:
-    """Minimal OpenAPI adapter for config-time and runtime schema checks."""
+    """Minimal OpenAPI adapter for config-time and runtime schema checks.
+
+    Parameters
+    ----------
+    contract_path : str
+        Path to the OpenAPI contract file.
+    """
 
     def __init__(self, contract_path: str) -> None:
         self._contract_path = Path(contract_path)
@@ -31,6 +37,19 @@ class OpenAPIContractValidator:
         status_code: int,
         response_body: Any,
     ) -> None:
+        """Validate a configured interaction against the contract.
+
+        Parameters
+        ----------
+        method : str
+            HTTP method of the configured interaction.
+        path : str
+            HTTP path of the configured interaction.
+        status_code : int
+            Response status code configured for the interaction.
+        response_body : Any
+            Response payload configured for the interaction.
+        """
         operation = self._operation_for(method, path, config_time=True)
         response = self._response_for(operation, status_code, method, path, config_time=True)
         schema = self._json_schema_from_response(response)
@@ -46,6 +65,17 @@ class OpenAPIContractValidator:
         )
 
     def validate_request(self, method: str, path: str, json_body: Any) -> None:
+        """Validate an incoming request payload at runtime.
+
+        Parameters
+        ----------
+        method : str
+            HTTP method of the incoming request.
+        path : str
+            HTTP path of the incoming request.
+        json_body : Any
+            Parsed JSON request payload.
+        """
         operation = self._operation_for(method, path, config_time=False)
         schema = self._request_schema(operation)
         if schema is None:
@@ -66,6 +96,19 @@ class OpenAPIContractValidator:
         status_code: int,
         response_body: Any,
     ) -> None:
+        """Validate an outgoing response payload at runtime.
+
+        Parameters
+        ----------
+        method : str
+            HTTP method of the response interaction.
+        path : str
+            HTTP path of the response interaction.
+        status_code : int
+            Response status code.
+        response_body : Any
+            Response payload body.
+        """
         operation = self._operation_for(method, path, config_time=False)
         response = self._response_for(
             operation=operation,

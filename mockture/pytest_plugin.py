@@ -12,7 +12,20 @@ from mockture.server import Mockture
 
 
 def use_mockture(*args: Any, **kwargs: Any) -> pytest.MarkDecorator:
-    """Alias for pytest.mark.mockture(...)."""
+    """Alias for ``pytest.mark.mockture(...)``.
+
+    Parameters
+    ----------
+    *args : Any
+        Positional marker arguments.
+    **kwargs : Any
+        Keyword marker arguments.
+
+    Returns
+    -------
+    pytest.MarkDecorator
+        Configured pytest marker decorator.
+    """
     return pytest.mark.mockture(*args, **kwargs)
 
 
@@ -20,6 +33,13 @@ _VALID_SCOPES = {"function", "module", "session"}
 
 
 def pytest_addoption(parser: pytest.Parser) -> None:
+    """Register plugin ini options.
+
+    Parameters
+    ----------
+    parser : pytest.Parser
+        Pytest parser instance.
+    """
     parser.addini(
         "mockture_contract",
         "Default OpenAPI contract path for @pytest.mark.mockture",
@@ -38,6 +58,13 @@ def pytest_addoption(parser: pytest.Parser) -> None:
 
 
 def pytest_configure(config: pytest.Config) -> None:
+    """Register marker documentation for this plugin.
+
+    Parameters
+    ----------
+    config : pytest.Config
+        Pytest config object.
+    """
     config.addinivalue_line(
         "markers",
         (
@@ -101,6 +128,18 @@ def _mockture_autouse(
 
 @pytest.fixture
 def mockture(request: pytest.FixtureRequest) -> Mockture:
+    """Return the active ``Mockture`` instance for the current test.
+
+    Parameters
+    ----------
+    request : pytest.FixtureRequest
+        Current fixture request.
+
+    Returns
+    -------
+    Mockture
+        Active marker-configured mock instance.
+    """
     instance = getattr(request.node, "_mockture_instance", None)
     if instance is None:
         raise pytest.UsageError(

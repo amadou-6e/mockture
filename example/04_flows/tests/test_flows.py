@@ -1,4 +1,4 @@
-"""04_flows — Named flows, sequences, and scenario files.
+"""04_flows â€” Named flows, sequences, and scenario files.
 
 Covers all the formats supported by the flows engine:
   - sequence (list of template names / {template, args} dicts)
@@ -70,11 +70,12 @@ def test_named_scenario_dict_flow(mockture) -> None:
 @pytest.mark.mockture(
     api="basic_api",
     sequence=[
-        "create_order_success",                          # template name only — uses defaults
+        "create_order_success",                          # template name only â€” uses defaults
         {"template": "get_order", "args": {"order_id": "ord-seq-1", "status": "created"}},
     ],
 )
 def test_inline_sequence_on_marker(mockture) -> None:
+    """Test inline sequence on marker."""
     r_post = httpx.post(
         mockture.url_for("/orders"),
         json={"item_id": "SKU-4", "quantity": 1},
@@ -98,6 +99,7 @@ def test_inline_sequence_on_marker(mockture) -> None:
     },
 )
 def test_inline_scenario_on_marker(mockture) -> None:
+    """Test inline scenario on marker."""
     r = httpx.post(
         mockture.url_for("/orders"),
         json={"item_id": "SKU-5", "quantity": 1},
@@ -112,7 +114,7 @@ def test_inline_scenario_on_marker(mockture) -> None:
 
 @pytest.mark.mockture(api="basic_api")
 def test_scenario_yaml_file(mockture) -> None:
-    """Pass a file path to respond() — loads a scenario YAML."""
+    """Pass a file path to respond() â€” loads a scenario YAML."""
     scenario_path = str(_SCENARIOS_DIR / "reorder_scenario.yml")
     mockture.respond(scenario_path)
 

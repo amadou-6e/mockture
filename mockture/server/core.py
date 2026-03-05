@@ -31,7 +31,21 @@ class _Interaction:
 
 
 class Mockture:
-    """Configurable contract-aware in-process HTTP mock server."""
+    """Configurable contract-aware in-process HTTP mock server.
+
+    Parameters
+    ----------
+    contract_path : str
+        Path to the OpenAPI contract file.
+    templates_path : str
+        Path to the templates YAML file.
+    strict : bool, default=True
+        Whether to enforce contract validation at config and runtime.
+    host : str, default="127.0.0.1"
+        Bind host for the internal HTTP server.
+    port : int, default=0
+        Bind port for the internal HTTP server. ``0`` selects a free port.
+    """
 
     def __init__(
         self,
@@ -55,6 +69,13 @@ class Mockture:
 
     @property
     def base_url(self) -> str:
+        """Return the server base URL.
+
+        Returns
+        -------
+        str
+            The base URL of the started mock server.
+        """
         if self._httpserver is None:
             raise MocktureError(
                 "Mockture server is not started. Hint: call start() before using base_url."
@@ -62,6 +83,18 @@ class Mockture:
         return self._httpserver.url_for("")
 
     def url_for(self, path: str) -> str:
+        """Build a full URL for a registered relative path.
+
+        Parameters
+        ----------
+        path : str
+            Relative path to join with the running server base URL.
+
+        Returns
+        -------
+        str
+            Fully-qualified URL for the path.
+        """
         if self._httpserver is None:
             raise MocktureError(
                 "Mockture server is not started. Hint: call start() before using url_for()."
@@ -69,6 +102,7 @@ class Mockture:
         return self._httpserver.url_for(path)
 
     def start(self) -> None:
+        """Start the underlying HTTP server and register queued interactions."""
         if self._httpserver is not None:
             return
         try:
@@ -85,18 +119,57 @@ class Mockture:
             self._register_interaction(interaction)
 
     def stop(self) -> None:
+        """Stop the underlying HTTP server if it is running."""
         if self._httpserver is None:
             return
         self._httpserver.stop()
         self._httpserver = None
 
     def for_context(self, **context_args: Any) -> MocktureContext:
+        """Create a context-bound responder facade.
+
+        Parameters
+        ----------
+        **context_args : Any
+            Context values merged into template args for each response call.
+
+        Returns
+        -------
+        MocktureContext
+            Context object that forwards response registrations to this instance.
+        """
         return MocktureContext(parent=self, context_args=context_args)
 
     def for_incident(self, incident_id: str) -> MocktureContext:
+        """Create a context prefilled with ``incident_id``.
+
+        Parameters
+        ----------
+        incident_id : str
+            Incident identifier used by templates that require incident context.
+
+        Returns
+        -------
+        MocktureContext
+            Context object with ``incident_id`` set.
+        """
         return self.for_context(incident_id=incident_id)
 
     def respond(self, target: str | dict[str, Any], **kwargs: Any) -> "Mockture":
+        """Register one or more interactions from a template target.
+
+        Parameters
+        ----------
+        target : str | dict[str, Any]
+            Template name, scenario file path, or inline scenario mapping.
+        **kwargs : Any
+            Explicit template args when ``target`` is a template name.
+
+        Returns
+        -------
+        Mockture
+            The same instance for fluent chaining.
+        """
         self._respond_with_context({}, target, kwargs)
         return self
 
@@ -144,6 +217,20 @@ class Mockture:
                 self._register_interaction(interaction)
 
     def calls_for(self, path: str, method: str) -> CallView:
+        """Return captured calls filtered by path and method.
+
+        Parameters
+        ----------
+        path : str
+            Request path to filter by.
+        method : str
+            HTTP method to filter by.
+
+        Returns
+        -------
+        CallView
+            View over matching call records.
+        """
         method_upper = method.upper()
         filtered = [
             record
@@ -153,6 +240,17 @@ class Mockture:
         return CallView(records=filtered)
 
     def assert_called(self, path: str, method: str, times: int) -> None:
+        """Assert that a path/method pair was called an exact number of times.
+
+        Parameters
+        ----------
+        path : str
+            Request path to verify.
+        method : str
+            HTTP method to verify.
+        times : int
+            Expected number of calls.
+        """
         observed = self.calls_for(path=path, method=method).count
         if observed != times:
             raise AssertionError(
@@ -161,6 +259,7 @@ class Mockture:
             )
 
     def assert_no_contract_violations(self) -> None:
+        """Assert that no runtime contract violations were recorded."""
         if self._violations:
             lines = "\n".join(self._violations)
             raise AssertionError(f"Contract violations detected:\n{lines}")

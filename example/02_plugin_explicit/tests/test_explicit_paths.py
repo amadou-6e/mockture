@@ -1,7 +1,7 @@
-"""02_plugin_explicit — pytest plugin with explicit paths on every marker.
+"""02_plugin_explicit â€” pytest plugin with explicit paths on every marker.
 
 Every marker carries contract= and templates= directly.
-No mockture.ini needed — good for one-off tests or when you want
+No mockture.ini needed â€” good for one-off tests or when you want
 the paths to be visible in the test file itself.
 """
 
@@ -20,6 +20,7 @@ _TEMPLATES = str(_ROOT / "configs" / "basic_api.templates.yml")
 
 @pytest.mark.mockture(contract=_CONTRACT, templates=_TEMPLATES, strict=True)
 def test_create_order_with_explicit_paths(mockture) -> None:
+    """Test create order with explicit paths."""
     mockture.respond("create_order_success", order_id="ord-explicit-1", status="queued")
 
     r = httpx.post(
@@ -51,6 +52,7 @@ def test_use_mockture_alias(mockture) -> None:
 
 @pytest.mark.mockture(contract=_CONTRACT, templates=_TEMPLATES, strict=True)
 def test_fetch_order_by_id(mockture) -> None:
+    """Test fetch order by id."""
     mockture.respond("get_order", order_id="ord-fetch-1", status="processing")
 
     r = httpx.get(mockture.url_for("/orders/ord-fetch-1"), timeout=5.0)
@@ -61,6 +63,7 @@ def test_fetch_order_by_id(mockture) -> None:
 
 @pytest.mark.mockture(contract=_CONTRACT, templates=_TEMPLATES, strict=True)
 def test_conflict_explicit(mockture) -> None:
+    """Test conflict explicit."""
     mockture.respond("create_order_conflict")
 
     r = httpx.post(

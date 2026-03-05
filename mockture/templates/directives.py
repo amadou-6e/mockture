@@ -12,7 +12,22 @@ from mockture.errors import TemplateArgsError
 
 
 def expand_body_directives(body: Any, args: dict[str, Any], path: str) -> Any:
-    """Expand built-in directives in a response body payload."""
+    """Expand built-in directives in a response body payload.
+
+    Parameters
+    ----------
+    body : Any
+        Response body template that may contain directives.
+    args : dict[str, Any]
+        Rendered template arguments available to generators.
+    path : str
+        Interaction path used for error context.
+
+    Returns
+    -------
+    Any
+        Response body with directives expanded.
+    """
     cloned = deepcopy(body)
     return _expand_node(cloned, args, path)
 

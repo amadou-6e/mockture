@@ -1,7 +1,7 @@
-"""08_multi_api — Auth API tests.
+"""08_multi_api â€” Auth API tests.
 
 mockture.ini in this directory points at configs/auth/.
-Completely independent from tests_orders/ — different contract,
+Completely independent from tests_orders/ â€” different contract,
 different templates, different Mockture instance.
 """
 
@@ -11,6 +11,7 @@ import pytest
 
 @pytest.mark.mockture
 def test_login_success(mockture) -> None:
+    """Test login success."""
     mockture.respond("login_success", access_token="tok-abc123")
 
     r = httpx.post(
@@ -27,6 +28,7 @@ def test_login_success(mockture) -> None:
 
 @pytest.mark.mockture
 def test_login_unauthorized(mockture) -> None:
+    """Test login unauthorized."""
     mockture.respond("login_unauthorized")
 
     r = httpx.post(
@@ -41,6 +43,7 @@ def test_login_unauthorized(mockture) -> None:
 
 @pytest.mark.mockture
 def test_get_me(mockture) -> None:
+    """Test get me."""
     mockture.respond("get_me", user_id="usr-001", username="alice")
 
     r = httpx.get(mockture.url_for("/auth/me"), timeout=5.0)

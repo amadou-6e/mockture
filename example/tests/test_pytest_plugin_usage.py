@@ -22,6 +22,7 @@ _CONTRACT_PATH, _TEMPLATES_PATH = _example_paths()
     strict=True,
 )
 def test_marker_decorator_enables_mockture(mockture):  # type: ignore[no-untyped-def]
+    """Test marker decorator enables mockture."""
     mockture.respond("create_order_success", order_id="ord-plugin-1", status="queued")
     response = httpx.post(
         mockture.url_for("/orders"),
@@ -37,6 +38,7 @@ def test_marker_decorator_enables_mockture(mockture):  # type: ignore[no-untyped
     strict=False,
 )
 def test_import_alias_decorator_enables_mockture(mockture):  # type: ignore[no-untyped-def]
+    """Test import alias decorator enables mockture."""
     mockture.respond("create_order_success", order_id="ord-plugin-2")
     response = httpx.post(
         mockture.url_for("/orders"),
@@ -44,4 +46,3 @@ def test_import_alias_decorator_enables_mockture(mockture):  # type: ignore[no-u
         timeout=5.0,
     )
     assert response.status_code == 201
-

@@ -1,4 +1,4 @@
-"""07_template_authoring — x-mockture annotations + two-file layout.
+"""07_template_authoring â€” x-mockture annotations + two-file layout.
 
 The OpenAPI spec carries x-mockture-template / x-mockture-defaults /
 x-mockture-required annotations. Running:
@@ -53,7 +53,7 @@ def test_auto_generated_get_order(mockture) -> None:
 
 @pytest.mark.mockture(api="basic_api")
 def test_auto_generated_conflict(mockture) -> None:
-    """Conflict template — default message comes from x-mockture-defaults."""
+    """Conflict template â€” default message comes from x-mockture-defaults."""
     mockture.respond("create_order_conflict")
 
     r = httpx.post(
@@ -68,7 +68,7 @@ def test_auto_generated_conflict(mockture) -> None:
 
 @pytest.mark.mockture(api="basic_api")
 def test_required_arg_must_be_supplied(mockture) -> None:
-    """get_order requires order_id — omitting it raises TemplateArgsError."""
+    """get_order requires order_id â€” omitting it raises TemplateArgsError."""
     from mockture.errors import TemplateArgsError
 
     with pytest.raises(TemplateArgsError):
@@ -90,7 +90,7 @@ def test_required_arg_must_be_supplied(mockture) -> None:
 def test_hand_authored_invalid_template(mockture) -> None:
     """Hand-authored template that intentionally violates the contract schema.
 
-    Using strict=False so respond() does not raise at config-time — the
+    Using strict=False so respond() does not raise at config-time â€” the
     test verifies the response shape, not contract compliance.
     """
     mockture.respond("invalid_success_shape")

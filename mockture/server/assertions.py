@@ -7,7 +7,21 @@ from typing import Any
 
 @dataclass(frozen=True)
 class CallRecord:
-    """Captured request call."""
+    """Captured request call.
+
+    Parameters
+    ----------
+    method : str
+        Request HTTP method.
+    path : str
+        Request path.
+    json_body : Any
+        Parsed JSON payload captured from the request.
+    headers : dict[str, str]
+        Captured request headers.
+    status_code : int
+        Status code served by the mock response.
+    """
 
     method: str
     path: str
@@ -18,7 +32,13 @@ class CallRecord:
 
 @dataclass
 class CallView:
-    """Filtered call view returned by calls_for."""
+    """Filtered call view returned by ``calls_for``.
+
+    Parameters
+    ----------
+    records : list[CallRecord], default=[]
+        Captured records that match a filter.
+    """
 
     records: list[CallRecord] = field(default_factory=list)
 

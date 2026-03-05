@@ -15,13 +15,31 @@ from mockture.errors import TemplateNotFoundError
 
 
 class TemplateLibrary:
-    """In-memory template collection parsed from templates.yml."""
+    """In-memory template collection parsed from templates.yml.
+
+    Parameters
+    ----------
+    templates_path : str
+        Path to the templates YAML file.
+    """
 
     def __init__(self, templates_path: str) -> None:
         self._templates_path = Path(templates_path)
         self._templates = self._load_templates()
 
     def has_template(self, name: str) -> bool:
+        """Check whether a template name exists.
+
+        Parameters
+        ----------
+        name : str
+            Template name to check.
+
+        Returns
+        -------
+        bool
+            ``True`` when the template exists.
+        """
         return name in self._templates
 
     def render(
@@ -30,6 +48,22 @@ class TemplateLibrary:
         context_args: dict[str, Any] | None,
         explicit_args: dict[str, Any] | None,
     ) -> dict[str, Any]:
+        """Render a template into a concrete interaction payload.
+
+        Parameters
+        ----------
+        template_name : str
+            Template key from the loaded templates file.
+        context_args : dict[str, Any] | None
+            Context-level arguments merged before explicit args.
+        explicit_args : dict[str, Any] | None
+            Per-call explicit arguments.
+
+        Returns
+        -------
+        dict[str, Any]
+            Fully rendered interaction payload.
+        """
         if template_name not in self._templates:
             raise TemplateNotFoundError(
                 f"Template '{template_name}' not found in '{self._templates_path}'. "
@@ -54,6 +88,18 @@ class TemplateLibrary:
 
     @staticmethod
     def normalize_scenario_payload(payload: dict[str, Any]) -> list[tuple[str, dict[str, Any]]]:
+        """Normalize a scenario payload to invocation tuples.
+
+        Parameters
+        ----------
+        payload : dict[str, Any]
+            Mapping of template names to args dict, args list, or ``None``.
+
+        Returns
+        -------
+        list[tuple[str, dict[str, Any]]]
+            Ordered template invocations.
+        """
         if not isinstance(payload, dict):
             raise ScenarioFormatError(
                 "Scenario payload must be a mapping of template->args. "

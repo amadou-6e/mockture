@@ -15,6 +15,20 @@ def normalize_respond_input(
     first_arg: str | dict[str, Any],
     kwargs: dict[str, Any],
 ) -> list[tuple[str, dict[str, Any]]]:
+    """Normalize ``respond(...)`` inputs into template invocation tuples.
+
+    Parameters
+    ----------
+    first_arg : str | dict[str, Any]
+        Template name, scenario file path, or inline scenario mapping.
+    kwargs : dict[str, Any]
+        Explicit args passed alongside a template name.
+
+    Returns
+    -------
+    list[tuple[str, dict[str, Any]]]
+        Ordered ``(template_name, args)`` invocations.
+    """
     if isinstance(first_arg, dict):
         if kwargs:
             raise ScenarioFormatError(

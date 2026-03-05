@@ -1,4 +1,4 @@
-"""06_strict_modes — strict=True vs strict=False.
+"""06_strict_modes â€” strict=True vs strict=False.
 
 strict=True (default):
   - Config-time: respond() raises ContractConfigError for schema-invalid bodies.
@@ -43,7 +43,7 @@ def test_strict_raises_on_invalid_template_body() -> None:
 def test_non_strict_does_not_raise_on_invalid_template_body() -> None:
     """With strict=False, respond() accepts the invalid template without raising."""
     mock = _mock(strict=False)
-    # Does not raise — violation is recorded internally.
+    # Does not raise â€” violation is recorded internally.
     mock.respond("invalid_success_shape")
 
 

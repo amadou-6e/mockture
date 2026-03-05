@@ -1,4 +1,4 @@
-﻿from pathlib import Path
+from pathlib import Path
 
 import httpx
 
@@ -14,6 +14,7 @@ def _example_paths() -> tuple[Path, Path]:
 
 
 def test_happy_path_with_strict_mockture() -> None:
+    """Test happy path with strict mockture."""
     contract_path, templates_path = _example_paths()
 
     mock = Mockture(
@@ -40,6 +41,7 @@ def test_happy_path_with_strict_mockture() -> None:
 
 
 def test_request_violation_strict_vs_non_strict() -> None:
+    """Test request violation strict vs non strict."""
     contract_path, templates_path = _example_paths()
 
     strict_mock = Mockture(
@@ -81,6 +83,7 @@ def test_request_violation_strict_vs_non_strict() -> None:
 
 
 def test_config_time_validation_blocks_invalid_template() -> None:
+    """Test config time validation blocks invalid template."""
     contract_path, templates_path = _example_paths()
 
     mock = Mockture(
@@ -94,5 +97,4 @@ def test_config_time_validation_blocks_invalid_template() -> None:
         raise AssertionError("Expected ContractConfigError was not raised")
     except ContractConfigError:
         pass
-
 
