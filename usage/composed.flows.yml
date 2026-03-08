@@ -1,0 +1,12 @@
+flows:
+  create_and_fetch:
+  - template: create_order_success
+    args:
+      status_code: '201'
+      order_id: ord-001
+      status: queued
+  - template: get_order
+    args:
+      order_id: ord-001
+      status_code: '200'
+      status: queued

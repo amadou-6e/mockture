@@ -3,9 +3,10 @@
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass
 from typing import Any
 from typing import TYPE_CHECKING
+
+from pydantic import BaseModel
 
 from mockture.server.assertions import CallRecord
 from mockture.server.assertions import CallView
@@ -20,8 +21,7 @@ if TYPE_CHECKING:
     from pytest_httpserver import HTTPServer
 
 
-@dataclass
-class _Interaction:
+class _Interaction(BaseModel):
     template_name: str
     method: str
     path: str
